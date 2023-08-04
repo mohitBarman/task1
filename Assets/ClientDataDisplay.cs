@@ -5,9 +5,13 @@ using SimpleJSON;
 using System.Collections.Generic;
 using System.Collections;
 using TMPro;
+using static UnityEditor.Progress;
+
 public class ClientDataDisplay : MonoBehaviour
 {
     public TMP_Dropdown dropdown;
+    public GameObject popup;
+    public GameObject popitem;
     public GameObject itemPrefab;
     public Transform content;
     public string url = "https://qa2.sunbasedata.com/sunbase/portal/api/assignment.jsp?cmd=client_data";
@@ -46,6 +50,10 @@ public class ClientDataDisplay : MonoBehaviour
         StartCoroutine(FetchDataCoroutine());
     }
 
+    public void closepopup()
+    {
+        popup.SetActive(false);
+    }
     private IEnumerator FetchDataCoroutine()
     {
         using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
@@ -120,7 +128,8 @@ public class ClientDataDisplay : MonoBehaviour
     {
         foreach (ClientInfo client in clients)
         {
-            SpawnItem(client.name, client.label, client.points);
+            SpawnItem(client.name, client.label, client.points,client.address);
+            
         }
     }
 
@@ -130,7 +139,7 @@ public class ClientDataDisplay : MonoBehaviour
         {
             if (client.isManager)
             {
-                SpawnItem(client.name, client.label, client.points);
+                SpawnItem(client.name, client.label, client.points, client.address);
             }
         }
     }
@@ -141,12 +150,12 @@ public class ClientDataDisplay : MonoBehaviour
         {
             if (!client.isManager)
             {
-                SpawnItem(client.name, client.label, client.points);
+                SpawnItem(client.name, client.label, client.points, client.address);
             }
         }
     }
 
-    private void SpawnItem(string name, string label, int points)
+    private void SpawnItem(string name, string label, int points,string address)
     {
         Debug.Log(name);
         GameObject item = Instantiate(itemPrefab, content);
@@ -155,5 +164,18 @@ public class ClientDataDisplay : MonoBehaviour
         itemTexts[0].text = name;
         itemTexts[1].text = label;
         itemTexts[2].text = points.ToString();
+
+        item.GetComponent<Button>().onClick.AddListener(() => showpopup( name,  label,  points,  address));
+    }
+
+   public void showpopup(string name, string label, int points, string address)
+    {
+        popup.SetActive(true);
+        TMP_Text[] itemTexts = popitem.GetComponentsInChildren<TMP_Text>();
+
+        itemTexts[0].text = name;
+      
+        itemTexts[1].text = points.ToString();
+        itemTexts[2].text = address;
     }
 }
