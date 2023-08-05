@@ -174,7 +174,6 @@ public class ClientDataDisplay : MonoBehaviour
         TMP_Text[] itemTexts = popitem.GetComponentsInChildren<TMP_Text>();
 
         itemTexts[0].text = name;
-      
         itemTexts[1].text = points.ToString();
         itemTexts[2].text = address;
     }
